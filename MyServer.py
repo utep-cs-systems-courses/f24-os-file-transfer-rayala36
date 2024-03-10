@@ -13,7 +13,7 @@ switchesVarDefaults = (
     (('-?', '--usage'), "usage", False), # boolean (set if present)
     )
 
-
+server = "MyServer"
 paramMap = params.parseParams(switchesVarDefaults)
 
 listenPort = paramMap['listenPort']
@@ -32,7 +32,7 @@ def chatWithClient(connAddr):
 
     # Message to Client will be implemented here
 
-
+    deframer(sock.fileno())
     sock.shutdown(socket.SHUT_WR)
     sys.exit(0)                 # terminate child
 

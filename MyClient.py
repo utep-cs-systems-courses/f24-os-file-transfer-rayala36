@@ -4,6 +4,7 @@
 import socket, sys, re, time
 sys.path.append("../lib")       # for params
 import params
+import Framer, Buffers
 
 switchesVarDefaults = (
     (('-s', '--server'), 'server', "127.0.0.1:50001"),
@@ -12,6 +13,7 @@ switchesVarDefaults = (
     )
 
 
+client = "MyClient"
 paramMap = params.parseParams(switchesVarDefaults)
 
 server, usage  = paramMap["server"], paramMap["usage"]
@@ -50,6 +52,11 @@ if s is None:
     print('could not open socket')
     sys.exit(1)
 
+filesToReceive = []
+filesToReceive.append("foo.txt")
+framer(s.fileno(), filesToReceive)
+exit()
+    
 delay = float(paramMap['delay']) # delay before reading (default = 0s)
 if delay != 0:
     print(f"sleeping for {delay}s")
