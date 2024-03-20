@@ -6,6 +6,18 @@ sys.path.append("../lib")       # for params
 import params
 import Framer, Buffers
 
+def convertToBin(len):
+    binVal = ""
+    div = 128
+    while(div > 0):
+        if(len - div > -1):
+            len = len-div
+            binVal += "1"
+        else:
+            binVal += "0"
+        div = div//2
+    return binVal
+
 switchesVarDefaults = (
     (('-s', '--server'), 'server', "127.0.0.1:50001"),
     (('-d', '--delay'), 'delay', "0"),
@@ -52,16 +64,34 @@ if s is None:
     print('could not open socket')
     sys.exit(1)
 
-filesToReceive = []
-filesToReceive.append("foo.txt")
-framer(s.fileno(), filesToReceive)
-exit()
-    
-delay = float(paramMap['delay']) # delay before reading (default = 0s)
-if delay != 0:
-    print(f"sleeping for {delay}s")
-    time.sleep(int(delay))
-    print("done sleeping")
+#My own framer to send files; My original framer wasn't too useful so I made a custom Framer here
+bufferedWriter = Buffers.BufferedWriter("c")
+for file s.fileno():
+    fd = os.open(file, os.O_RDONLY)
+    bufferedReader = Buffers.BufferedReader(fd)
+
+    # Size of file name in bits is obtained
+    fNameSizeInB = ""
+    div = 128
+    sizeInD = len(target) 
+    while(div > 0):
+        if(sizeInD-div > -1):
+            sizeInD = sizeInD - div
+            fNameSizeInB += "1"
+        else:
+            fNameSizeInB += "0"
+        div = div//2
+    encodedFNameSize = fNameSizeInB.encode()
+    for byte in encodedFNameSize:
+        bufferedWriter.writeByte(byte)
+
+    # File name is coverted to a byte array
+    fnAsByteArr = file.encode()
+    for Byte in fnAsByteArr:
+        bufferedWriter.writeByte(byte)
+
+    # File size is converted to binary
+    fileSizeInB = 
 
 while 1:
     data = s.recv(1024).decode()
