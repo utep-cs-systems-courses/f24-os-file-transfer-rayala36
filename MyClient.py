@@ -71,27 +71,24 @@ for file s.fileno():
     bufferedReader = Buffers.BufferedReader(fd)
 
     # Size of file name in bits is obtained
-    fNameSizeInB = ""
-    div = 128
-    sizeInD = len(target) 
-    while(div > 0):
-        if(sizeInD-div > -1):
-            sizeInD = sizeInD - div
-            fNameSizeInB += "1"
-        else:
-            fNameSizeInB += "0"
-        div = div//2
-    encodedFNameSize = fNameSizeInB.encode()
-    for byte in encodedFNameSize:
-        bufferedWriter.writeByte(byte)
-
+    fnSizeInB = convertToBin(len(file))l.encode()
+    for Byte in fnSizeInB:
+        bufferedWriter.writeByte(Byte)
+        
     # File name is coverted to a byte array
     fnAsByteArr = file.encode()
     for Byte in fnAsByteArr:
-        bufferedWriter.writeByte(byte)
+        bufferedWriter.writeByte(Byte)
 
     # File size is converted to binary
-    fileSizeInB = 
+    fileSizeInB = converToBin(os.path.getsize(target)).encode()
+    for Byte in fileSizeInB:
+        bufferedWriter.writeByte(Byte)
+
+    while(binVal := bufferedReader.readByte()) is not None:
+        bufferedWriter.writeByte(binVal)
+    bufferedWriter.flush()
+bufferedWriter.flush()
 
 while 1:
     data = s.recv(1024).decode()
