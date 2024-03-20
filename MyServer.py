@@ -8,6 +8,17 @@ import params
 import Framer
 import Buffer
 
+def convertFromBin(len):
+    decVal = 0
+    div = 128
+    if(len == 0):
+        return len
+    for bit in len:
+        if(bit == "1"):
+            decVal += div
+        div = div//2
+    return decVal
+
 switchesVarDefaults = (
     (('-l', '--listenPort') ,'listenPort', 50001),
     (('-?', '--usage'), "usage", False), # boolean (set if present)
@@ -31,8 +42,59 @@ def chatWithClient(connAddr):
 
 
     # Message to Client will be implemented here
+    messagesToReceive = []
+    messagesToReceive.append("Message.txt")
+    # The map below will map file names to unique indices
+    filesHM = {}
+    br = Buffers.BufferedReader(sock.fileno())
+    while(True):
+        band = 8
+        bandBytes = 0
+        fileNameLenInB = ""
+        while(bandBytes < band):
+            binContents = os.read(sock.fileno(), 1)
+            fileNameLenInB += binContents.decode()
+            bandBytes += 1
 
-    deframer(sock.fileno())
+        fileNameLenInB = convertFromBin(fileNameLenInB)
+
+        if(fileNameLenInB == 0):
+            return 0
+
+        bandBytes = 0
+        fName = ""
+        while(bandBytes < fileNameLenInB):
+            fName += os.read(sock.fileno(), 1).decode()
+            bandBytes += 1
+
+        # If there are duplicate files, the value corresponding to the file in the HM will increase by one for every duplicate
+        if fName in filesHM:
+            fName += str(filesHM[fName])
+            filesHM[fName] += 1
+        else:
+            filesHM[fName] += 1
+
+        os.chdir("MessageFolder")
+        fName = os.open(fName, os.O_WRONLY)
+        fLenInDec = ""
+        bytesInLen = 0
+        while(bytesInLen < 8):
+            fLenInDec += os.read(sock.fileno(), 1).decode()
+            bytesInLen += 1
+            
+        fLenInDec = convertFromBin(fLenInDec)
+
+        bytesInLen = 0
+        br = Buffers.BufferedReader(sock.fileno())
+        bw = Buffers.BufferedWriter(fName)
+
+        while(bytesInLen < fLenInDec):
+            byteContents = br.readByte()
+            bw.writeByte(byteContents)
+            bytesInLen += 1
+        bw.flush()
+    print("File Transferred")
+
     sock.shutdown(socket.SHUT_WR)
     sys.exit(0)                 # terminate child
 

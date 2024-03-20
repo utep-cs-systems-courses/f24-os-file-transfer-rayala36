@@ -64,9 +64,12 @@ if s is None:
     print('could not open socket')
     sys.exit(1)
 
+messagesToSend = []
+messagesToSend.append("Message.txt")
+
 #My own framer to send files; My original framer wasn't too useful so I made a custom Framer here
 bufferedWriter = Buffers.BufferedWriter("c")
-for file s.fileno():
+for file in messagesToSend:
     fd = os.open(file, os.O_RDONLY)
     bufferedReader = Buffers.BufferedReader(fd)
 
@@ -89,6 +92,8 @@ for file s.fileno():
         bufferedWriter.writeByte(binVal)
     bufferedWriter.flush()
 bufferedWriter.flush()
+
+s.shutdown(socket.SHUT_WR)
 
 while 1:
     data = s.recv(1024).decode()
