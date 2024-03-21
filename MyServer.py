@@ -8,12 +8,12 @@ import params
 import Framer
 import Buffers
 
-def convertFromBin(len):
+def convertFromBin(binLen):
     decVal = 0
     div = 128
-    if(len == 0):
-        return len
-    for bit in len:
+    if(binLen == 0):
+        return binLen
+    for bit in binLen:
         if(bit == "1"):
             decVal += div
         div = div//2
@@ -72,7 +72,7 @@ def chatWithClient(connAddr):
             fName += str(filesHM[fName])
             filesHM[fName] += 1
         else:
-            filesHM[fName] += 1
+            filesHM[fName] = 1
 
         os.chdir("MessageFolder")
         fName = os.open(fName, os.O_WRONLY)
