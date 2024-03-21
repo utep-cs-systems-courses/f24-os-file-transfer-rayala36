@@ -6,7 +6,7 @@ import socket, sys, re, os, time
 sys.path.append("lib")       # for params
 import params
 import Framer
-import Buffer
+import Buffers
 
 def convertFromBin(len):
     decVal = 0

@@ -1,17 +1,18 @@
 #! /usr/bin/env python3
 
 # Echo client program
-import socket, sys, re, time
-sys.path.append("../lib")       # for params
+import socket, sys, re, time, os
+sys.path.append("lib")       # for params
 import params
-import Framer, Buffers
+import Framer
+import Buffers
 
-def convertToBin(len):
+def convertToBin(fileLen):
     binVal = ""
     div = 128
     while(div > 0):
-        if(len - div > -1):
-            len = len-div
+        if(fileLen - div > -1):
+            fileLen = fileLen-div
             binVal += "1"
         else:
             binVal += "0"
@@ -48,6 +49,7 @@ for res in socket.getaddrinfo(serverHost, serverPort, socket.AF_UNSPEC, socket.S
         s = socket.socket(af, socktype, proto)
     except socket.error as msg:
         print(" error: %s" % msg)
+        s.close()
         s = None
         continue
     try:
@@ -68,29 +70,30 @@ messagesToSend = []
 messagesToSend.append("Message.txt")
 
 #My own framer to send files; My original framer wasn't too useful so I made a custom Framer here
-bufferedWriter = Buffers.BufferedWriter("c")
-for file in messagesToSend:
-    fd = os.open(file, os.O_RDONLY)
+bufferedWriter = Buffers.BufferedWriter(s.fileno())
+for message in messagesToSend:
+    fd = os.open(message, os.O_RDONLY)
     bufferedReader = Buffers.BufferedReader(fd)
 
     # Size of file name in bits is obtained
-    fnSizeInB = convertToBin(len(file))l.encode()
+    fnSizeInB = convertToBin(len(message)).encode()
     for Byte in fnSizeInB:
         bufferedWriter.writeByte(Byte)
         
     # File name is coverted to a byte array
-    fnAsByteArr = file.encode()
+    fnAsByteArr = message.encode()
     for Byte in fnAsByteArr:
         bufferedWriter.writeByte(Byte)
 
     # File size is converted to binary
-    fileSizeInB = converToBin(os.path.getsize(target)).encode()
+    fileSizeInB = convertToBin(os.path.getsize(message)).encode()
     for Byte in fileSizeInB:
         bufferedWriter.writeByte(Byte)
 
     while(binVal := bufferedReader.readByte()) is not None:
         bufferedWriter.writeByte(binVal)
     bufferedWriter.flush()
+    
 bufferedWriter.flush()
 
 s.shutdown(socket.SHUT_WR)
