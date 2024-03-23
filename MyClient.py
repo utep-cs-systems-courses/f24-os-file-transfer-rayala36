@@ -21,7 +21,6 @@ def convertToBin(fileLen):
 
 switchesVarDefaults = (
     (('-s', '--server'), 'server', "127.0.0.1:50001"),
-    (('-d', '--delay'), 'delay', "0"),
     (('-?', '--usage'), "usage", False), # boolean (set if present)
     )
 
@@ -90,8 +89,8 @@ for message in messagesToSend:
     for Byte in fileSizeInB:
         bufferedWriter.writeByte(Byte)
 
-    while(binVal := bufferedReader.readByte()) is not None:
-        bufferedWriter.writeByte(binVal)
+    while(binString := bufferedReader.readByte()) is not None:
+        bufferedWriter.writeByte(binString)
     bufferedWriter.flush()
     
 bufferedWriter.flush()

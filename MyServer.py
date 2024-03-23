@@ -77,10 +77,10 @@ def chatWithClient(connAddr):
         os.chdir("MessageFolder")
         fName = os.open(fName, os.O_WRONLY)
         fLenInDec = ""
-        bytesInLen = 0
-        while(bytesInLen < 8):
+        bandBytes = 0
+        while(bandBytes < 8):
             fLenInDec += os.read(sock.fileno(), 1).decode()
-            bytesInLen += 1
+            bandBytes += 1
             
         fLenInDec = convertFromBin(fLenInDec)
 
@@ -88,10 +88,10 @@ def chatWithClient(connAddr):
         br = Buffers.BufferedReader(sock.fileno())
         bw = Buffers.BufferedWriter(fName)
 
-        while(bytesInLen < fLenInDec):
+        while(bandBytes < fLenInDec):
             byteContents = br.readByte()
             bw.writeByte(byteContents)
-            bytesInLen += 1
+            bandBytes += 1
         bw.flush()
     print("File Transferred")
 
